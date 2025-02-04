@@ -1,0 +1,100 @@
+// Arduino Projekt
+// Ampel Regelung, Steuerung -
+// Steuerung ohne Rückmeldung des aktuellen Zustands.
+// mit Schalter
+// C++ code
+//
+
+// Autoampel
+int rot=13;
+int orange=12;
+int gruen=8;
+
+// Fussgängerampel
+int fRot=7;
+int fGruen=4;
+
+int taster =2;
+int ton =3;
+
+// Hilfsvariablen
+int status=0;
+
+
+void setup()
+{
+  	pinMode(rot, OUTPUT);
+    pinMode(orange, OUTPUT);
+    pinMode(gruen, OUTPUT);
+  
+    pinMode(fRot, OUTPUT);
+    pinMode(fGruen, OUTPUT);
+  
+    pinMode(ton, OUTPUT);
+    pinMode(taster, INPUT);
+}
+
+// --- eigene Methoden ---
+// Fussgänger
+// rot grün (Zeit zum Laugen)
+void fussganger(){
+// rot aus, grun an, ton an
+  digitalWrite(fRot, LOW);
+  digitalWrite(fGruen, HIGH);
+  digitalWrite(ton, HIGH);
+  // Fussgänger können laufen
+  // 5 Sekunden
+  delay(5000);
+  // gruen aus, ton aus, rot an
+  digitalWrite(fRot, HIGH);
+  digitalWrite(fGruen, LOW);
+  digitalWrite(ton, LOW);
+}
+
+// Autos
+// grün auf rot über orange  - grün - orange  rot
+void gruenAufRot(){
+  // grün aus
+  digitalWrite(gruen, LOW);
+  // orange an
+  digitalWrite(orange, HIGH);
+  // zeit zu Bremsen
+  delay(3000);
+  // orange aus, rot an
+  digitalWrite(orange, LOW);
+  digitalWrite(rot, HIGH);
+}
+// Autos
+// rot auf grün - rot - grün
+// grün auf rot über orange  - grün - orange  rot
+void gruenAufGruen(){
+  // rot-orange-phase
+  digitalWrite(rot, HIGH);
+  digitalWrite(orange, HIGH);
+  // bereitmachen zum Weiterfahren
+  delay(1000);
+  // rot, orange aus, grün an
+  digitalWrite(rot, LOW);
+  digitalWrite(orange, LOW);
+  digitalWrite(rot, HIGH);
+}
+
+
+
+void loop(){
+	digitalWrite(fRot, HIGH);
+	digitalWrite(gruen, HIGH);
+  // Fussgänger drückt Taster
+  status = digitalRead(taster);
+  if (status==HIGH){
+  	delay(1000);
+  	// AUtos grün auf rot
+    gruenAufRot();
+    delay(1000);
+    // Fussgänger rot grün rot
+    fussganger();
+    delay(1000);
+    // Autos rot aug grüen
+  }
+     
+}
